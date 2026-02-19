@@ -1,28 +1,24 @@
 /**
- * Store d'authentification — gestion JWT en localStorage.
+ * Store d'authentification.
+ * Le JWT est stocké en cookie httpOnly par le backend (invisible au JS).
+ * On ne conserve côté client que les infos utilisateur pour l'affichage.
  * Validation du mot de passe selon NIST SP 800-63B.
  */
 
-const TOKEN_KEY = 'auth_token';
 const USER_KEY = 'auth_user';
 
-/** Récupère le token JWT. */
-export const getToken = () => localStorage.getItem(TOKEN_KEY);
-
-/** Stocke le token et les infos utilisateur. */
-export const setAuth = (token, user) => {
-  localStorage.setItem(TOKEN_KEY, token);
+/** Stocke les infos utilisateur après connexion. */
+export const setAuth = (user) => {
   localStorage.setItem(USER_KEY, JSON.stringify(user));
 };
 
 /** Supprime les données d'authentification. */
 export const clearAuth = () => {
-  localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(USER_KEY);
 };
 
 /** Vérifie si l'utilisateur est connecté. */
-export const isAuthenticated = () => getToken() !== null;
+export const isAuthenticated = () => getCurrentUser() !== null;
 
 /** Retourne l'utilisateur connecté ou null. */
 export const getCurrentUser = () => {

@@ -12,7 +12,7 @@ import { renderCartPage } from './pages/cartPage.js';
 import { renderStatsPage } from './pages/statsPage.js';
 import { renderDashboard } from './pages/dashboardPage.js';
 import { fetchCsrfToken } from './api/http.js';
-import { searchProducts } from './api/productsApi.js';
+import { fetchProducts } from './api/productsApi.js';
 import { productCard } from './components/productCard.js';
 import { addToCart } from './store/cartStore.js';
 import { escapeHtml } from './utils.js';
@@ -40,8 +40,14 @@ const renderSearchPage = async (container, _params, query) => {
     </div>`;
 
   try {
-    const results = await searchProducts(q);
-    const products = Array.isArray(results) ? results : [];
+    const all = await fetchProducts();
+    const lowerQ = q.toLowerCase();
+    const products = (Array.isArray(all) ? all : []).filter(
+      (p) =>
+        (p.label || '').toLowerCase().includes(lowerQ) ||
+        (p.category || '').toLowerCase().includes(lowerQ) ||
+        (p.description || '').toLowerCase().includes(lowerQ),
+    );
 
     if (products.length === 0) {
       container.innerHTML = `

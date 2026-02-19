@@ -3,11 +3,10 @@
  */
 
 import { register } from '../api/authApi.js';
-import { setAuth, validatePassword } from '../store/authStore.js';
+import { validatePassword } from '../store/authStore.js';
 import { escapeHtml } from '../utils.js';
 import { csrfHiddenField } from '../api/http.js';
 import { navigateTo } from '../router/router.js';
-import { renderNavbar } from '../components/navbar.js';
 
 /** Rendu de la page d'inscription. */
 export const renderRegisterPage = async (container) => {
@@ -141,15 +140,10 @@ export const renderRegisterPage = async (container) => {
     submitBtn.textContent = 'Inscription…';
 
     try {
-      const data = await register(email, password);
-      if (data.token) {
-        setAuth(data.token, data.user || { email });
-        renderNavbar();
-        navigateTo('/dashboard');
-      } else {
-        successDiv.textContent = 'Compte créé ! Vous pouvez maintenant vous connecter.';
-        successDiv.classList.remove('hidden');
-      }
+      await register(email, password);
+      successDiv.textContent = 'Compte créé ! Redirection vers la connexion…';
+      successDiv.classList.remove('hidden');
+      setTimeout(() => navigateTo('/login'), 1500);
     } catch (err) {
       errorDiv.textContent = escapeHtml(err.message || "Erreur lors de l'inscription.");
       errorDiv.classList.remove('hidden');

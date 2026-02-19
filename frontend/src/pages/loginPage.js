@@ -100,7 +100,7 @@ export const renderLoginPage = async (container) => {
 
     try {
       const data = await login(email, password);
-      setAuth(data.token, data.user || { email });
+      setAuth(data.user || { email });
       renderNavbar();
       navigateTo('/dashboard');
     } catch (err) {
